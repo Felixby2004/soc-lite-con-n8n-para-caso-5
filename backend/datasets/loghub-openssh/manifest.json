@@ -1,0 +1,19 @@
+{
+  "dataset_id": "loghub-openssh-2k",
+  "name": "Loghub OpenSSH",
+  "origin": "real_lab_server",
+  "repository": "https://github.com/logpai/loghub",
+  "homepage": "https://github.com/logpai/loghub/tree/master/OpenSSH",
+  "commit": "374038faa4ca122dd7ca0730372c0b78f76f8597",
+  "download_url": "https://raw.githubusercontent.com/logpai/loghub/374038faa4ca122dd7ca0730372c0b78f76f8597/OpenSSH/OpenSSH_2k.log",
+  "sha256": "1e4912727fa88245113d41b16a0cd25ceadba7f931e1c406542885b91254264f",
+  "bytes": 225216,
+  "records": 2000,
+  "retrieved_at": "2026-11-05T00:01:34.9090733Z",
+  "sampling": "Muestra pública de 2000 líneas publicada por Loghub; no es el corpus completo ni una muestra representativa garantizada.",
+  "timestamp_note": "El log no incluye año ni zona horaria; se conserva el texto original. occurred_at representa la fecha de importación.",
+  "ground_truth": "No contiene etiquetas verificadas de ataque o cuenta comprometida.",
+  "citation": "J. Zhu, S. He, P. He, J. Liu and M. R. Lyu. Loghub: A Large Collection of System Log Datasets for AI-driven Log Analytics. ISSRE, 2023.",
+  "citation_url": "https://arxiv.org/abs/2008.06448",
+  "usage": "Disponible para investigación y uso académico; ver LICENSE y SOURCE.md."
+}

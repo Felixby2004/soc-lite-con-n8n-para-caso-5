@@ -1,0 +1,87 @@
+# Uso: docker compose -f docker-compose.yml -f docker-compose.demo.yml up -d --build
+# Solo escucha en loopback. No ejecuta acciones ni notificaciones externas.
+services:
+  postgres:
+    environment:
+      TZ: America/Lima
+    volumes: !override
+      - postgres_demo_data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+  redis:
+    command: [redis-server, --appendonly, 'yes', --maxmemory, 256mb, --maxmemory-policy, allkeys-lru]
+  ollama:
+    profiles: [llm]
+  ollama-pull:
+    profiles: [llm]
+  backend:
+    environment:
+      ENVIRONMENT: development
+      DEMO_MODE: 'true'
+      TIMEZONE: America/Lima
+      CORS_ORIGINS: '["http://localhost:8080","http://127.0.0.1:8080"]'
+      BASE_URL: http://localhost:8080
+      FRONTEND_URL: http://localhost:8080
+      THREAT_INTEL_ENABLED: 'false'
+      ALLOW_EXTERNAL_LLM: 'false'
+      SLACK_WEBHOOK_URL: ''
+      TELEGRAM_BOT_TOKEN: ''
+      SMTP_HOST: ''
+      OSTICKET_BASE_URL: ''
+      REDMINE_BASE_URL: ''
+    command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000', --workers, '2']
+  langchain:
+    environment:
+      ENVIRONMENT: development
+      DEMO_MODE: 'true'
+      THREAT_INTEL_ENABLED: 'false'
+      ALLOW_EXTERNAL_LLM: 'false'
+      LANGCHAIN_TRACING_V2: 'false'
+      LANGSMITH_TRACING: 'false'
+    depends_on: !override
+      redis:
+        condition: service_healthy
+    command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8001']
+  frontend:
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, http://127.0.0.1/healthz]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    build:
+      args:
+        VITE_API_URL: /api/v1
+  n8n:
+    container_name: soc-lite-demo-n8n
+    environment:
+      DB_TYPE: sqlite
+      GENERIC_TIMEZONE: America/Lima
+      N8N_HOST: localhost
+      N8N_PROTOCOL: http
+      N8N_SECURE_COOKIE: 'false'
+      WEBHOOK_URL: http://localhost:5678/
+      N8N_DIAGNOSTICS_ENABLED: 'false'
+      N8N_VERSION_NOTIFICATIONS_ENABLED: 'false'
+    volumes: !override
+      - n8n_demo_data:/home/node/.n8n
+      - ./n8n:/workflows:ro
+  nginx:
+    ports: !override
+      - '127.0.0.1:8080:80'
+    volumes: !override
+      - ./deploy/nginx.demo.conf:/etc/nginx/conf.d/default.conf:ro
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, http://127.0.0.1/health]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on: !override
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+
+volumes:
+  n8n_demo_data:
+  postgres_demo_data:
+
