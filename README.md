@@ -1,4 +1,17 @@
-# SOC-Lite · Triaje automático de alertas SOC
+# SOC-Lite · Monitoreo de accesos y triaje SOC
+
+## Caso 5 · Monitoreo de accesos
+
+Después de iniciar la demo, abre **Monitoreo de accesos** en
+http://localhost:8080/access y elige **Cargar demostración**. La muestra incluye
+un desplazamiento improbable, un acceso nocturno desde un dispositivo nuevo y
+una conexión VPN de control. Puedes consultar la evidencia, abrir la alerta
+asociada, simular un acceso sin guardarlo, etiquetar eventos revisados,
+comparar umbrales y exportar la evaluación en PDF, Word o Excel.
+En **Modelos** también puedes entrenar con Optuna, seguir los ensayos y
+evaluar un acceso con el modelo guardado.
+El [manual del Caso 5](docs/10-monitoreo-de-accesos.md) describe el puntaje,
+el formato de ingesta y la actualización de bases de datos existentes.
 
 ## Despliegue local revisado
 
@@ -12,8 +25,8 @@ Ejecutar `.\scripts\deploy-demo.ps1` con Docker Desktop iniciado.
 Aplicación: http://localhost:8080 · API: http://localhost:8080/docs.
 Acceso demo: `admin` / `Admin123!`.
 Este modo usa triaje simulado y conserva los volúmenes existentes.
-La [revisión del Caso05 y sus diferencias](docs/08-revision-caso05-despliegue.md)
-detalla qué requisitos del documento aún no implementa este proyecto.
+La [revisión inicial](docs/08-revision-caso05-despliegue.md) documenta el estado
+del proyecto antes del módulo de monitoreo de accesos.
 
 > **Caso de uso 1 (Crítico):** solución accesible para PYME / empresa mediana / organismo
 > público que combina orquestación *low-code* (n8n) con enriquecimiento contextual y
@@ -88,6 +101,9 @@ docker compose exec ollama ollama pull llama3.1:8b
 createdb soclite
 psql -U soclite -d soclite -f db/schema.sql
 psql -U soclite -d soclite -f db/seed.sql
+psql -X -v ON_ERROR_STOP=1 -U soclite -d soclite -f db/03-access-monitoring.sql
+psql -X -v ON_ERROR_STOP=1 -U soclite -d soclite -f db/04-access-evaluation.sql
+psql -X -v ON_ERROR_STOP=1 -U soclite -d soclite -f db/05-access-models.sql
 # Opcional: 5.000 alertas sintéticas para probar el dashboard
 psql -U soclite -d soclite -c "SELECT soclite.generate_synthetic_alerts(5000, 30);"
 
@@ -95,6 +111,8 @@ psql -U soclite -d soclite -c "SELECT soclite.generate_synthetic_alerts(5000, 30
 cd backend && python -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
+# En otra terminal, desde backend, iniciar el trabajador de modelos
+python -m app.services.access_ml_worker
 
 # 3. Microservicio de triaje
 cd ../langchain-service && pip install -r requirements.txt

@@ -20,6 +20,7 @@ import Reports from '@/pages/Reports';
 import TriageStats from '@/pages/TriageStats';
 import NotFound from '@/pages/NotFound';
 import PublicDataset from '@/pages/PublicDataset';
+import AccessMonitoring from '@/pages/AccessMonitoring';
 
 /** Tabla de rutas de la aplicación (ver README del frontend). */
 export function App(): JSX.Element {
@@ -37,6 +38,7 @@ export function App(): JSX.Element {
           <Route path="alerts" element={<Alerts />} />
           <Route path="alerts/:id" element={<AlertDetail />} />
           <Route path="datasets" element={<ProtectedRoute permission="alerts:read"><PublicDataset /></ProtectedRoute>} />
+          <Route path="access" element={<ProtectedRoute permission="access:read"><AccessMonitoring /></ProtectedRoute>} />
 
           <Route path="incidents" element={<Incidents />} />
           <Route path="incidents/:id" element={<IncidentDetail />} />

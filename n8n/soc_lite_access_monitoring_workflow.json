@@ -1,0 +1,63 @@
+{
+  "id": "Case05AccessLogs",
+  "name": "SOC-Lite · Caso 5 · Ingesta programada de accesos",
+  "active": false,
+  "nodes": [
+    {
+      "id": "a0500000-0000-4000-8000-000000000001",
+      "name": "Cada 5 minutos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "parameters": { "rule": { "interval": [{ "field": "minutes", "minutesInterval": 5 }] } }
+    },
+    {
+      "id": "a0500000-0000-4000-8000-000000000002",
+      "name": "Consultar accesos de VPN o AD",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [250, 0],
+      "parameters": {
+        "url": "https://origen-de-accesos.example.invalid/events",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": { "timeout": 15000 }
+      },
+      "notes": "Configure la URL y credencial del adaptador VPN/AD. Debe devolver {source, events} según el contrato de SOC-Lite."
+    },
+    {
+      "id": "a0500000-0000-4000-8000-000000000003",
+      "name": "Validar lote",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 0],
+      "parameters": {
+        "jsCode": "const batch = $input.first().json;\nif (typeof batch.source !== 'string' || !Array.isArray(batch.events)) {\n  throw new Error('El origen debe devolver un objeto con source y events.');\n}\nif (batch.events.length > 250) throw new Error('El origen debe paginar los lotes de más de 250 accesos.');\nreturn batch.events.length ? [{ json: { source: batch.source, events: batch.events } }] : [];"
+      }
+    },
+    {
+      "id": "a0500000-0000-4000-8000-000000000004",
+      "name": "Enviar a SOC Lite",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [750, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:8000/api/v1/access/events/ingest",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": { "timeout": 30000 }
+      },
+      "notes": "Seleccione una credencial Header Auth con el encabezado X-Ingest-Key de SOC-Lite."
+    }
+  ],
+  "connections": {
+    "Cada 5 minutos": { "main": [[{ "node": "Consultar accesos de VPN o AD", "type": "main", "index": 0 }]] },
+    "Consultar accesos de VPN o AD": { "main": [[{ "node": "Validar lote", "type": "main", "index": 0 }]] },
+    "Validar lote": { "main": [[{ "node": "Enviar a SOC Lite", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "saveDataSuccessExecution": "none" }
+}

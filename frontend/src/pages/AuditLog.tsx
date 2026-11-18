@@ -40,6 +40,7 @@ const MODULE_LABELS: Record<string, string> = {
   reports: 'Reportes',
   audit: 'Auditoría',
   settings: 'Configuración',
+  access: 'Monitoreo de accesos',
   integrations: 'Integraciones',
 };
 

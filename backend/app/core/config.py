@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     ENVIRONMENT: Literal["development", "staging", "production"] = "development"
     DEBUG: bool = False
+    DEMO_MODE: bool = False
     API_V1_PREFIX: str = "/api/v1"
     TIMEZONE: str = "America/Santiago"
     BASE_URL: str = "http://localhost:8000"

@@ -37,6 +37,7 @@ PATH_MODULE_MAP: tuple[tuple[str, str], ...] = (
     ("/api/v1/roles", "roles"),
     ("/api/v1/permissions", "roles"),
     ("/api/v1/alerts", "alerts"),
+    ("/api/v1/access", "access"),
     ("/api/v1/triage", "triage"),
     ("/api/v1/incidents", "incidents"),
     ("/api/v1/dashboard", "dashboard"),

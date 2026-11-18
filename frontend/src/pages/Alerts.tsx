@@ -248,7 +248,7 @@ export function Alerts(): JSX.Element {
       render: (row) => (
         <div className="flex flex-col gap-1">
           <SourceTypeBadge source={row.source_type} />
-          <span className="text-[10px] text-cyan-300">{row.source_name === PUBLIC_SOURCE ? 'Dataset real' : 'Otra fuente / demo'}</span>
+          {row.source_name ? <span className="text-[10px] text-cyan-300">{row.source_name === PUBLIC_SOURCE ? 'Dataset real' : row.source_name}</span> : null}
           <span className="truncate font-mono text-[11px] text-slate-500" title={row.agent_name ?? ''}>
             {row.agent_name ?? '—'}
           </span>

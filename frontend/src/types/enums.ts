@@ -82,6 +82,7 @@ export const AUDIT_MODULES = [
   'users',
   'roles',
   'alerts',
+  'access',
   'triage',
   'incidents',
   'dashboard',

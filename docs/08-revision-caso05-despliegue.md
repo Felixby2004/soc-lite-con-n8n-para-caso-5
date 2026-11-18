@@ -2,6 +2,9 @@
 
 Fecha de revisión: 4 de noviembre de 2026.
 
+Esta revisión documenta el estado anterior al
+[módulo de monitoreo de accesos](10-monitoreo-de-accesos.md).
+
 Se leyeron Caso05.docx y Prompt.docx. Caso05 describe detección de cuentas
 comprometidas mediante perfiles de acceso, velocidad geográfica, horarios y
 dispositivos, con scoring y explicaciones. También menciona gestión de IoCs.

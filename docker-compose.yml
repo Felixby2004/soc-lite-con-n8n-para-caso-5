@@ -26,6 +26,9 @@ services:
       # Los scripts se ejecutan en orden alfabético la primera vez
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+      - ./db/03-access-monitoring.sql:/docker-entrypoint-initdb.d/03-access-monitoring.sql:ro
+      - ./db/04-access-evaluation.sql:/docker-entrypoint-initdb.d/04-access-evaluation.sql:ro
+      - ./db/05-access-models.sql:/docker-entrypoint-initdb.d/05-access-models.sql:ro
     networks:
       - soc-internal
     healthcheck:
@@ -158,6 +161,7 @@ services:
   # Backend FastAPI
   # -------------------------------------------------------------------
   backend:
+    image: soc-lite-backend:latest
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -190,6 +194,31 @@ services:
         limits:
           cpus: "2.0"
           memory: 2G
+
+  access-model-worker:
+    image: soc-lite-backend:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      CORS_ORIGINS: '[]'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    command: [python, -m, app.services.access_ml_worker]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    networks:
+      - soc-internal
+    healthcheck:
+      disable: true
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
 
   # -------------------------------------------------------------------
   # Orquestación low-code (n8n)

@@ -2,6 +2,8 @@
 from fastapi import APIRouter
 
 from app.api.v1.routers import (
+    access,
+    access_models,
     alerts,
     audit,
     auth,
@@ -28,5 +30,7 @@ api_router.include_router(dashboard.router)
 api_router.include_router(reports.router)
 api_router.include_router(audit.router)
 api_router.include_router(datasets.router)
+api_router.include_router(access.router)
+api_router.include_router(access_models.router)
 
 __all__ = ["api_router"]

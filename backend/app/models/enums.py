@@ -92,6 +92,7 @@ AUDIT_MODULES: tuple[str, ...] = (
     "users",
     "roles",
     "alerts",
+    "access",
     "triage",
     "incidents",
     "dashboard",

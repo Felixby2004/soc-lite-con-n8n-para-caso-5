@@ -3,6 +3,7 @@
 Importar este módulo garantiza que todos los mappers estén configurados
 antes de resolver relaciones entre módulos.
 """
+from app.models.access import AccessAnomaly, AccessIoC, AccessLog, AccessModelRun, AccessReview
 from app.models.alert import Alert, Asset, EnrichmentData, TriageResult
 from app.models.audit import AuditLog
 from app.models.enums import (
@@ -29,6 +30,11 @@ from app.models.user import Permission, RefreshToken, Role, User, role_permissio
 
 __all__ = [
     "AUDIT_MODULES",
+    "AccessAnomaly",
+    "AccessIoC",
+    "AccessLog",
+    "AccessModelRun",
+    "AccessReview",
     "Alert",
     "AlertMetricsDaily",
     "AlertStatus",

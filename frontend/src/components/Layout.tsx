@@ -17,8 +17,8 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
-  Radio,
   ScrollText,
+  ShieldAlert,
   ShieldHalf,
   Siren,
   UserCog,
@@ -48,6 +48,7 @@ const NAV_SECTIONS: Array<{ title: string; items: NavItem[] }> = [
     items: [
       { to: '/', label: 'Dashboard', icon: <LayoutDashboard size={17} />, permission: 'dashboard:read', end: true },
       { to: '/alerts', label: 'Alertas', icon: <BellRing size={17} />, permission: 'alerts:read' },
+      { to: '/access', label: 'Monitoreo de accesos', icon: <ShieldAlert size={17} />, permission: 'access:read' },
       { to: '/datasets', label: 'Datos reales', icon: <Activity size={17} />, permission: 'alerts:read' },
       { to: '/incidents', label: 'Incidentes', icon: <Siren size={17} />, permission: 'incidents:read' },
       { to: '/triage', label: 'Triaje IA', icon: <Cpu size={17} />, permission: 'triage:read' },
@@ -73,6 +74,7 @@ const NAV_SECTIONS: Array<{ title: string; items: NavItem[] }> = [
 const BREADCRUMBS: Record<string, string> = {
   dashboard: 'Dashboard',
   alerts: 'Alertas',
+  access: 'Monitoreo de accesos',
   datasets: 'Datos reales',
   incidents: 'Incidentes',
   triage: 'Triaje IA',

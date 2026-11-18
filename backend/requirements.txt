@@ -37,6 +37,10 @@ xlsxwriter==3.2.0                # Excel con formato avanzado
 Jinja2==3.1.5                    # plantillas de reportes
 matplotlib==3.10.0               # gráficos embebidos en PDF/Word
 
+# --- Evaluación y aprendizaje supervisado de accesos ---
+scikit-learn==1.7.2
+optuna==4.6.0
+
 # --- Caché y colas ---
 redis==5.2.1
 hiredis==3.1.0

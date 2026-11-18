@@ -8,6 +8,9 @@ services:
       - postgres_demo_data:/var/lib/postgresql/data
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+      - ./db/03-access-monitoring.sql:/docker-entrypoint-initdb.d/03-access-monitoring.sql:ro
+      - ./db/04-access-evaluation.sql:/docker-entrypoint-initdb.d/04-access-evaluation.sql:ro
+      - ./db/05-access-models.sql:/docker-entrypoint-initdb.d/05-access-models.sql:ro
   redis:
     command: [redis-server, --appendonly, 'yes', --maxmemory, 256mb, --maxmemory-policy, allkeys-lru]
   ollama:
@@ -30,6 +33,11 @@ services:
       OSTICKET_BASE_URL: ''
       REDMINE_BASE_URL: ''
     command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000', --workers, '2']
+  access-model-worker:
+    environment:
+      ENVIRONMENT: development
+      DEMO_MODE: 'true'
+      TIMEZONE: America/Lima
   langchain:
     environment:
       ENVIRONMENT: development
